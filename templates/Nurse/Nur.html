@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Nurses</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Hospital Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/appo1">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doc">Doctor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nur">Nurse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dep">Department</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gs">General Staff</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pat">Patient</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ha">Hospital Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="med">Medical Records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="resm">Resource Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="emp">Employee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center mt-5">List of Nurses</h1>
+        <!-- Flash message section -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success mt-3" role="alert">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">EmployeeID</th>
+                    <th scope="col">Shift</th>
+                    <th scope="col">Qualifications</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nurse in nurses %}
+                <tr>
+                    <td id="employee_id_{{ nurse.EmployeeID }}">{{ nurse.EmployeeID }}</td>
+                    <td id="shift_{{ nurse.EmployeeID }}">{{ nurse.Shift }}</td>
+                    <td id="qualifications_{{ nurse.EmployeeID }}">{{ nurse.Qualifications }}</td>
+                    <td>
+                        <form id="form_{{ nurse.EmployeeID }}" action="/nur" method="POST" class="d-inline">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="employee_id" id="employee_id_input_{{ nurse.EmployeeID }}" value="{{ nurse.EmployeeID }}">
+                            <input type="hidden" name="shift" id="shift_input_{{ nurse.EmployeeID }}" value="{{ nurse.Shift }}">
+                            <input type="hidden" name="qualifications" id="qualifications_input_{{ nurse.EmployeeID }}" value="{{ nurse.Qualifications }}">
+                            <button type="button" id="updateButton_{{ nurse.EmployeeID }}" class="btn btn-primary" onclick="toggleEdit({{ nurse.EmployeeID }})">Update</button>
+                            <button type="submit" class="btn btn-danger d-none">Submit</button>
+                            <button type="submit" id="deleteButton_{{ nurse.EmployeeID }}" class="btn btn-danger" onclick="submitForm({{ nurse.EmployeeID }})" value="delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Back button -->
+        <button type="button" class="btn btn-primary" onclick="goBack()">Back</button>
+        <form action="/nur" method="post">
+            <!-- Hidden input field for action -->
+            <input type="hidden" name="action" value="insertrecord">
+            <!-- Button styled as a link -->
+            <button type="submit" class="btn btn-success">Insert Record</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+
+<script>
+
+        function toggleEdit(employeeId)
+        {
+            var employeeIdCell = document.getElementById('employee_id_' + employeeId);
+            var shiftCell = document.getElementById('shift_' + employeeId);
+            var qualificationsCell = document.getElementById('qualifications_' + employeeId);
+            var existingInputEmp = employeeIdCell.querySelector('input[type="text"]');
+            var existingInputShift = shiftCell.querySelector('input[type="text"]');
+            var existingInputQual = qualificationsCell.querySelector('input[type="text"]');
+            var editButton = employeeIdCell.parentNode.querySelector('#updateButton_' + employeeId);
+            if (existingInputEmp) 
+            {
+                // Switch back to non-edit mode
+                var originalEmployeeIdValue =  existingInputEmp.getAttribute('data-original-value'); // Get the original value
+                var originalShiftValue = existingInputShift.getAttribute('data-original-value'); // Get the original value
+                var originalQualificationsValue = existingInputQual.getAttribute('data-original-value'); // Get the original value
+               
+                employeeIdCell.innerHTML = originalEmployeeIdValue;
+                shiftCell.innerHTML = originalShiftValue;
+                qualificationsCell.innerHTML = originalQualificationsValue;
+                editButton.innerHTML = 'Update';
+                // Update the hidden input field values
+                document.getElementById('employee_id_input_' + employeeId).value = originalEmployeeIdValue;
+                document.getElementById('shift_input_' + employeeId).value = originalShiftValue;
+                document.getElementById('qualifications_input_' + employeeId).value = originalQualificationsValue;
+                // Remove the submit button
+                removeSubmitButton(employeeId);
+            } 
+            else 
+            {
+                // Switch to edit mode
+                editButton.innerHTML = 'Cancel';
+                var originalEmployeeIdValue = employeeIdCell.textContent.trim(); // Trim whitespace and newline characters
+                var originalShiftValue =  shiftCell.textContent.trim(); // Trim whitespace and newline characters
+                var originalQualificationsValue = qualificationsCell.textContent.trim(); // Trim whitespace and newline characters
+                employeeIdCell.innerHTML = '<input type="text" name="employee_id" value="' + originalEmployeeIdValue + '" data-original-value="' + originalEmployeeIdValue + '">';
+                shiftCell.innerHTML = '<input type="text" name="shift" value="' + originalShiftValue + '" data-original-value="' + originalShiftValue + '">';
+                qualificationsCell.innerHTML = '<input type="text" name="qualifications" value="' + originalQualificationsValue + '" data-original-value="' + originalQualificationsValue + '">';
+                // Add submit button
+                addSubmitButton(employeeId);
+            }
+        }
+
+        function addSubmitButton(employeeId) 
+        {
+            var cell = document.getElementById('qualifications_' + employeeId);
+            var submitButton = document.createElement("button");
+            submitButton.innerHTML = "Submit";
+            submitButton.classList.add("btn", "btn-success");
+            submitButton.setAttribute("onclick", "submitEdit(" + employeeId + ")");
+            cell.appendChild(submitButton);
+        }
+
+        function removeSubmitButton(employeeId) 
+        {
+            var cell = document.getElementById('employee_id_' + employeeId);
+            var submitButton = cell.querySelector("button");
+            if (submitButton) 
+            {
+                submitButton.remove();
+            }
+        }
+
+        function submitEdit(employeeId) 
+        {
+            var employeeIdCell = document.getElementById('employee_id_' + employeeId);
+            var shiftCell = document.getElementById('shift_' + employeeId);
+            var qualificationsCell = document.getElementById('qualifications_' + employeeId);
+            var newEmployeeIdValue = employeeIdCell.querySelector('input[type="text"]').value.trim();
+            var newShiftValue = shiftCell.querySelector('input[type="text"]').value.trim();
+            var newQualificationsValue = qualificationsCell.querySelector('input[type="text"]').value.trim();
+            // Update the hidden input field values
+            document.getElementById('employee_id_input_' + employeeId).value = newEmployeeIdValue;
+            document.getElementById('shift_input_' + employeeId).value = newShiftValue;
+            document.getElementById('qualifications_input_' + employeeId).value = newQualificationsValue;
+            // Submit the form
+            document.getElementById('form_' + employeeId).submit();
+            // Switch back to non-edit mode
+            toggleEdit(employeeId);
+        }
+
+        function submitForm(employeeId) 
+        {
+            console.log("Deleting nurse with EmployeeID:", employeeId);
+            event.preventDefault(); // Prevent the default form submission behavior
+            var form = document.getElementById('form_' + employeeId);
+            var actionInput = form.querySelector('input[name="action"]');
+            actionInput.value = 'delete'; // Change the action to 'delete'
+            form.submit(); // Submit the form
+        }
+        
+        function goBack() 
+        {
+            window.history.back();
+        }
+        function hideSuccessMessage() 
+        {
+            var successMessage = document.querySelector('.alert-success');
+            if (successMessage) 
+            {
+                setTimeout(function() 
+                {
+                    successMessage.style.display = 'none';
+                }, 3000); // Adjust the delay (in milliseconds) as needed
+            }
+        }
+
+        // Call the hideSuccessMessage function when the page loads
+        window.onload = function() 
+        {
+            hideSuccessMessage();
+        };
+
+    </script>
+    
+</body>
+</html>

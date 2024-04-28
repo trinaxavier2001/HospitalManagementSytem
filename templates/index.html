@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hospital Management System</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    
+    .nav-link {
+            color: #fff;
+        }
+
+        .nav-link:hover {
+            color: #ffc107;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            color: #005792;
+            margin-bottom: 1rem;
+        }
+        h3 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            color: #0077B6;
+            margin-bottom: 0.5rem;
+        }
+        p {
+            font-weight: 400;
+            color: #333;
+            line-height: 1.6;
+        }
+        .about-section, .services-section, .contact-section {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 40px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .contact-section {
+            background-color: #f8f9fa ;
+        }
+        .container.my-5 > section {
+            margin-top: 40px;
+        }
+        .carousel-item img {
+             width: 100%; 
+             height: 90vh; 
+             object-fit: cover;
+        }
+ 
+        .carousel-container {
+        .container-fluid {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%;
+            padding: 0;
+        }
+ 
+        .carousel-item {
+            min-height: 500px;
+        }
+        .offcanvas .navbar-nav .nav-item {
+            margin-bottom: 0;
+        }
+        
+        .offcanvas .navbar-nav .nav-link {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    }
+
+</style>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+<div class="container-fluid justify-content-start"> 
+<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="navbar-brand mx-auto"></div>
+<a class="navbar-brand" href="/index.html">Hospital Management System</a>
+<div class="navbar-brand mx-auto"></div>
+</div>
+</nav>
+ 
+ 
+<div class="offcanvas offcanvas-start bg-dark" tabindex="-1" id="sidebar">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title text-white">Directory</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/appo1">Appointments</a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/importexportjson">Import/Export JSON</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="doc">Doctor</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="nur">Nurse</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="dep">Department</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="gs">General Staff</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pat">Patient</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="ha">Hospital Admin</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="med">Medical Records</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="resm">Resource Management</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/emp">Employee</a>
+            </li>
+
+        </ul>
+    </div>
+</div>
+
+ 
+    <div class="container-fluid">
+<div class="row">
+<div class="col-12"> <!-- Full width column -->
+<div class="carousel-container">
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+<div class="carousel-indicators">
+<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+</div>
+<div class="carousel-inner">
+<div class="carousel-item active">
+<img src="{{ url_for('static', filename='iStock-1364075546.jpg') }}" alt="First Slide" style="height: 550px;">
+</div>
+<div class="carousel-item">
+<img src="{{ url_for('static', filename='iStock-927888456.jpg') }}" alt="Second Slide" style="height: 550px;">
+</div>
+<div class="carousel-item">
+<img src="{{ url_for('static', filename='iStock-628823308.jpg') }}" alt="Third Slide" style="height: 550px;">
+</div>
+</div>
+<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+<span class="visually-hidden">Previous</span>
+</button>
+<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+<span class="carousel-control-next-icon" aria-hidden="true"></span>
+<span class="visually-hidden">Next</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+ 
+<div class="container my-5">
+<section class="about-section mb-4">
+<h2>About Our Hospital</h2>
+<p>Welcome to our Hospital Management System. Our hospital is dedicated to providing top-tier medical care with state-of-the-art facilities. We're proud to serve our community with a full range of   health services, including emergency care, surgical procedures, and comprehensive diagnostic services. Our mission is to improve the health and well-being of our patients by delivering the best in medical expertise and compassionate care.</p>
+</section>
+<section class="services-section mb-4">
+<h2>Our Services</h2>
+<div class="row">
+<div class="col-md-4 mb-3">
+<h3>Emergency Care</h3>
+<p>Our Emergency Department is open 24/7, equipped to handle critical and life-threatening situations with swift and professional care.</p>
+</div>
+<div class="col-md-4 mb-3">
+<h3>Surgical Services</h3>
+<p>Our surgical teams are ready for all types of procedures, from routine to complex surgeries, ensuring high-quality care and recovery.</p>
+</div>
+<div class="col-md-4 mb-3">
+<h3>Outpatient Services</h3>
+<p>We offer a variety of outpatient services ranging from preventive screenings to therapy and counseling sessions.</p>
+</div>
+</div>
+</section>
+<section class="contact-section">
+<h2>Contact Us</h2>
+<p>If you have any questions or need to get in touch, please contact our main switchboard at (123) 456-7890, or visit our Contact page for more information on department contacts, directions, and hours of operation.</p>
+</section>
+</div>
+ 
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

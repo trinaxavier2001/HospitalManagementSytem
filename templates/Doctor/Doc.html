@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Doctors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Hospital Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/appo1">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doc">Doctor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nur">Nurse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dep">Department</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gs">General Staff</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pat">Patient</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ha">Hospital Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="med">Medical Records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="resm">Resource Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="emp">Employee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center mt-5">List of Doctors</h1>
+        <!-- Flash message section -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success mt-3" role="alert">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">DoctorID</th>
+                    <th scope="col">EmployeeID</th>
+                    <th scope="col">Specialization</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doctor in doctors %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ doctor.DoctorID }}</td>
+                    <td id="employee_id_{{ doctor.DoctorID }}">
+                        {{ doctor.EmployeeID }}
+                    </td>
+                    <td id="specialization_{{ doctor.DoctorID }}">
+                        {{ doctor.Specialization }}
+                    </td>
+                    <td>
+                        <form id="form_{{ doctor.DoctorID }}" action="/doc" method="POST" class="d-inline">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="doctor_id" value="{{ doctor.DoctorID }}">
+                            <input type="hidden" name="specialization" id="specialization_input_{{ doctor.DoctorID }}" value="{{ doctor.Specialization }}">
+                            <input type="hidden" name="employee_id" id="employee_id_input_{{ doctor.DoctorID }}" value="{{ doctor.EmployeeID }}">
+                            <button type="button" id="updateButton_{{ doctor.DoctorID }}" class="btn btn-primary" onclick="toggleEdit({{ doctor.DoctorID }})">Update</button>
+                            <button type="submit" class="btn btn-danger d-none">Submit</button>
+                            <button type="submit" id="deleteButton_{{ doctor.DoctorID }}" class="btn btn-danger" onclick="submitForm({{ doctor.DoctorID }})" value="delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" onclick="goBack()">Back</button>
+        <form action="/doc" method="post">
+            <!-- Hidden input field for action -->
+            <input type="hidden" name="action" value="insertrecord">
+            <!-- Button styled as a link -->
+            <button type="submit" class="btn btn-success">Insert Record</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+
+<script>
+        // alert("{{ message }}");
+        function toggleEdit(doctorId)
+        {
+            var specializationCell = document.getElementById('specialization_' + doctorId);
+            var employeeIdCell = document.getElementById('employee_id_' + doctorId);
+            var existingInput = specializationCell.querySelector('input[type="text"]');
+            var existingInputEmp = employeeIdCell.querySelector('input[type="text"]');
+            var editButton = specializationCell.parentNode.querySelector('#updateButton_' + doctorId);
+            if (existingInput) 
+            {
+                // Switch back to non-edit mode
+                var originalSpecializationValue = existingInput.getAttribute('data-original-value'); // Get the original value
+                var originalEmployeeIdValue =  existingInputEmp.getAttribute('data-original-value'); // Get the original value
+               
+                specializationCell.innerHTML = originalSpecializationValue;
+                employeeIdCell.innerHTML = originalEmployeeIdValue;
+                editButton.innerHTML = 'Update';
+                // Update the hidden input field values
+                document.getElementById('specialization_input_' + doctorId).value = originalSpecializationValue;
+                document.getElementById('employee_id_input_' + doctorId).value = originalEmployeeIdValue;
+                // Remove the submit button
+                removeSubmitButton(doctorId);
+            } 
+            else 
+            {
+                // Switch to edit mode
+                editButton.innerHTML = 'Cancel';
+                var originalSpecializationValue = specializationCell.textContent.trim(); // Trim whitespace and newline characters
+                var originalEmployeeIdValue =  employeeIdCell.textContent.trim(); // Trim whitespace and newline characters
+                specializationCell.innerHTML = '<input type="text" name="specialization" value="' + originalSpecializationValue + '" data-original-value="' + originalSpecializationValue + '">';
+                employeeIdCell.innerHTML = '<input type="text" name="employee_id" value="' + originalEmployeeIdValue + '" data-original-value="' + originalEmployeeIdValue + '">';
+                // Add submit button
+                addSubmitButton(doctorId);
+            }
+        }
+
+        function addSubmitButton(doctorId) 
+        {
+            var cell = document.getElementById('specialization_' + doctorId);
+            var submitButton = document.createElement("button");
+            submitButton.innerHTML = "Submit";
+            submitButton.classList.add("btn", "btn-success");
+            submitButton.setAttribute("onclick", "submitEdit(" + doctorId + ")");
+            cell.appendChild(submitButton);
+        }
+
+        function removeSubmitButton(doctorId) 
+        {
+            var cell = document.getElementById('specialization_' + doctorId);
+            var submitButton = cell.querySelector("button");
+            if (submitButton) 
+            {
+                submitButton.remove();
+            }
+        }
+
+        function submitEdit(doctorId) 
+        {
+            var specializationCell = document.getElementById('specialization_' + doctorId);
+            var employeeIdCell = document.getElementById('employee_id_' + doctorId);
+            var newSpecializationValue = specializationCell.querySelector('input[type="text"]').value.trim();
+            var newEmployeeIdValue = parseInt(employeeIdCell.querySelector('input[type="text"]').value.trim());
+            // Update the hidden input field values
+            document.getElementById('specialization_input_' + doctorId).value = newSpecializationValue;
+            document.getElementById('employee_id_input_' + doctorId).value = newEmployeeIdValue;
+            // Submit the form
+            document.getElementById('form_' + doctorId).submit();
+            // Switch back to non-edit mode
+            toggleEdit(doctorId);
+        }
+
+        function submitForm(doctorId) 
+        {
+            console.log("Deleting doctor with ID:", doctorId);
+            event.preventDefault(); // Prevent the default form submission behavior
+            var form = document.getElementById('form_' + doctorId);
+            var actionInput = form.querySelector('input[name="action"]');
+            actionInput.value = 'delete'; // Change the action to 'delete'
+            form.submit(); // Submit the form
+        }
+        
+        function goBack() 
+        {
+            window.history.back();
+        }
+        function hideSuccessMessage() 
+        {
+            var successMessage = document.querySelector('.alert-success');
+            if (successMessage) 
+            {
+                setTimeout(function() 
+                {
+                    successMessage.style.display = 'none';
+                }, 3000); // Adjust the delay (in milliseconds) as needed
+            }
+        }
+
+        // Call the hideSuccessMessage function when the page loads
+        window.onload = function() 
+        {
+            hideSuccessMessage();
+        };
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insert Medical Record</title>
+    <style>
+        /* Your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Hospital Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/appo1">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doc">Doctor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nur">Nurse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dep">Department</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gs">General Staff</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pat">Patient</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ha">Hospital Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="med">Medical Records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="resm">Resource Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="emp">Employee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>Insert Medical Record</h2>
+        <form action="/insert_medical_record" method="post">
+            <input type="hidden" name="action" value="insert">
+            <div class="form-group">
+                <label for="patient_id">Patient ID:</label>
+                <input type="number" id="patient_id" name="patient_id" required>
+            </div>
+            <div class="form-group">
+                <label for="doctor_id">Doctor ID:</label>
+                <input type="number" id="doctor_id" name="doctor_id" required>
+            </div>
+            <div class="form-group">
+                <label for="visit_date">Visit Date:</label>
+                <input type="date" id="visit_date" name="visit_date" required>
+            </div>
+            <div class="form-group">
+                <label for="diagnosis">Diagnosis:</label>
+                <input type="text" id="diagnosis" name="diagnosis" required>
+            </div>
+            <input type="submit" value="Insert Medical Record">
+        </form>
+    </div>
+</body>
+</html>

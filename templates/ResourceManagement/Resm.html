@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Resources</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Hospital Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/appo1">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doc">Doctor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nur">Nurse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dep">Department</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gs">General Staff</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pat">Patient</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ha">Hospital Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="med">Medical Records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="resm">Resource Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="emp">Employee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center mt-5">List of Resources</h1>
+        <!-- Flash message section -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success mt-3" role="alert">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">ResourceID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">AdminID</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in resources %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ resource.ResourceID }}</td>
+                    <td id="name_{{ resource.ResourceID }}">{{ resource.ResourceName }}</td>
+                    <td id="type_{{ resource.ResourceID }}">{{ resource.ResourceType }}</td>
+                    <td id="status_{{ resource.ResourceID }}">{{ resource.Status }}</td>
+                    <td id="location_{{ resource.ResourceID }}">{{ resource.Location }}</td>
+                    <td id="admin_id_{{ resource.ResourceID }}">{{ resource.AdminID }}</td>
+                    <td>
+                        <form id="form_{{ resource.ResourceID }}" action="/resm" method="POST" class="d-inline">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="resource_id" value="{{ resource.ResourceID }}">
+                            <input type="hidden" name="resource_name" id="name_input_{{ resource.ResourceID }}" value="{{ resource.ResourceName }}">
+                            <input type="hidden" name="resource_type" id="type_input_{{ resource.ResourceID }}" value="{{ resource.ResourceType }}">
+                            <input type="hidden" name="status" id="status_input_{{ resource.ResourceID }}" value="{{ resource.Status }}">
+                            <input type="hidden" name="location" id="location_input_{{ resource.ResourceID }}" value="{{ resource.Location }}">
+                            <input type="hidden" name="admin_id" id="admin_id_input_{{ resource.ResourceID }}" value="{{ resource.AdminID }}">
+                            <button type="button" id="updateButton_{{ resource.ResourceID }}" class="btn btn-primary" onclick="toggleEdit({{ resource.ResourceID }})">Update</button>
+                            <button type="submit" class="btn btn-danger d-none">Submit</button>
+                            <button type="submit" id="deleteButton_{{ resource.ResourceID }}" class="btn btn-danger" onclick="submitForm({{ resource.ResourceID }})" value="delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Back button -->
+        <button type="button" class="btn btn-primary" onclick="goBack()">Back</button>
+        <form action="/resm" method="post">
+            <!-- Hidden input field for action -->
+            <input type="hidden" name="action" value="insertrecord">
+            <!-- Button styled as a link -->
+            <button type="submit" class="btn btn-success">Insert Record</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+
+<script>
+
+        function toggleEdit(resourceId)
+        {
+            var nameCell = document.getElementById('name_' + resourceId);
+            var typeCell = document.getElementById('type_' + resourceId);
+            var statusCell = document.getElementById('status_' + resourceId);
+            var locationCell = document.getElementById('location_' + resourceId);
+            var adminIdCell = document.getElementById('admin_id_' + resourceId);
+            var existingInput = nameCell.querySelector('input[type="text"]');
+            var existingInputType = typeCell.querySelector('input[type="text"]');
+            var existingInputStatus = statusCell.querySelector('input[type="text"]');
+            var existingInputLocation = locationCell.querySelector('input[type="text"]');
+            var existingInputAdminId = adminIdCell.querySelector('input[type="text"]');
+            var editButton = nameCell.parentNode.querySelector('#updateButton_' + resourceId);
+            if (existingInput) 
+            {
+                // Switch back to non-edit mode
+                var originalNameValue = existingInput.getAttribute('data-original-value'); // Get the original value
+                var originalTypeValue = existingInputType.getAttribute('data-original-value'); // Get the original value
+                var originalStatusValue = existingInputStatus.getAttribute('data-original-value'); // Get the original value
+                var originalLocationValue = existingInputLocation.getAttribute('data-original-value'); // Get the original value
+                var originalAdminIdValue = existingInputAdminId.getAttribute('data-original-value'); // Get the original value
+               
+                nameCell.innerHTML = originalNameValue;
+                typeCell.innerHTML = originalTypeValue;
+                statusCell.innerHTML = originalStatusValue;
+                locationCell.innerHTML = originalLocationValue;
+                adminIdCell.innerHTML = originalAdminIdValue;
+                editButton.innerHTML = 'Update';
+                // Update the hidden input field values
+                document.getElementById('name_input_' + resourceId).value = originalNameValue;
+                document.getElementById('type_input_' + resourceId).value = originalTypeValue;
+                document.getElementById('status_input_' + resourceId).value = originalStatusValue;
+                document.getElementById('location_input_' + resourceId).value = originalLocationValue;
+                document.getElementById('admin_id_input_' + resourceId).value = originalAdminIdValue;
+                // Remove the submit button
+                removeSubmitButton(resourceId);
+            } 
+            else 
+            {
+                // Switch to edit mode
+                editButton.innerHTML = 'Cancel';
+                var originalNameValue = nameCell.textContent.trim(); // Trim whitespace and newline characters
+                var originalTypeValue =  typeCell.textContent.trim(); // Trim whitespace and newline characters
+                var originalStatusValue =  statusCell.textContent.trim(); // Trim whitespace and newline characters
+                var originalLocationValue =  locationCell.textContent.trim(); // Trim whitespace and newline characters
+                var originalAdminIdValue =  adminIdCell.textContent.trim(); // Trim whitespace and newline characters
+                nameCell.innerHTML = '<input type="text" name="name" value="' + originalNameValue + '" data-original-value="' + originalNameValue + '">';
+                typeCell.innerHTML = '<input type="text" name="type" value="' + originalTypeValue + '" data-original-value="' + originalTypeValue + '">';
+                statusCell.innerHTML = '<input type="text" name="status" value="' + originalStatusValue + '" data-original-value="' + originalStatusValue + '">';
+                locationCell.innerHTML = '<input type="text" name="location" value="' + originalLocationValue + '" data-original-value="' + originalLocationValue + '">';
+                adminIdCell.innerHTML = '<input type="text" name="admin_id" value="' + originalAdminIdValue + '" data-original-value="' + originalAdminIdValue + '">';
+                // Add submit button
+                addSubmitButton(resourceId);
+            }
+        }
+
+        function addSubmitButton(resourceId) 
+        {
+            var cell = document.getElementById('name_' + resourceId);
+            var submitButton = document.createElement("button");
+            submitButton.innerHTML = "Submit";
+            submitButton.classList.add("btn", "btn-success");
+            submitButton.setAttribute("onclick", "submitEdit(" + resourceId + ")");
+            cell.appendChild(submitButton);
+        }
+
+        function removeSubmitButton(resourceId) 
+        {
+            var cell = document.getElementById('name_' + resourceId);
+            var submitButton = cell.querySelector("button");
+            if (submitButton) 
+            {
+                submitButton.remove();
+            }
+        }
+
+        function submitEdit(resourceId) 
+        {
+            var nameCell = document.getElementById('name_' + resourceId);
+            var typeCell = document.getElementById('type_' + resourceId);
+            var statusCell = document.getElementById('status_' + resourceId);
+            var locationCell = document.getElementById('location_' + resourceId);
+            var adminIdCell = document.getElementById('admin_id_' + resourceId);
+            var newNameValue = nameCell.querySelector('input[type="text"]').value.trim();
+            var newTypeValue = typeCell.querySelector('input[type="text"]').value.trim();
+            var newStatusValue = statusCell.querySelector('input[type="text"]').value.trim();
+            var newLocationValue = locationCell.querySelector('input[type="text"]').value.trim();
+            var newAdminIdValue = adminIdCell.querySelector('input[type="text"]').value.trim();
+            // Update the hidden input field values
+            document.getElementById('name_input_' + resourceId).value = newNameValue;
+            document.getElementById('type_input_' + resourceId).value = newTypeValue;
+            document.getElementById('status_input_' + resourceId).value = newStatusValue;
+            document.getElementById('location_input_' + resourceId).value = newLocationValue;
+            document.getElementById('admin_id_input_' + resourceId).value = newAdminIdValue;
+            // Submit the form
+            document.getElementById('form_' + resourceId).submit();
+            // Switch back to non-edit mode
+            toggleEdit(resourceId);
+        }
+
+        function submitForm(resourceId) 
+        {
+            console.log("Deleting resource with ID:", resourceId);
+            event.preventDefault(); // Prevent the default form submission behavior
+            var form = document.getElementById('form_' + resourceId);
+            var actionInput = form.querySelector('input[name="action"]');
+            actionInput.value = 'delete'; // Change the action to 'delete'
+            form.submit(); // Submit the form
+        }
+        
+        function goBack() 
+        {
+            window.history.back();
+        }
+        function hideSuccessMessage() 
+        {
+            var successMessage = document.querySelector('.alert-success');
+            if (successMessage) 
+            {
+                setTimeout(function() 
+                {
+                    successMessage.style.display = 'none';
+                }, 3000); // Adjust the delay (in milliseconds) as needed
+            }
+        }
+
+        // Call the hideSuccessMessage function when the page loads
+        window.onload = function() 
+        {
+            hideSuccessMessage();
+        };
+
+    </script>
+    
+</body>
+</html>

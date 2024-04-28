@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Appointment</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Hospital Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/appo1">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doc">Doctor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nur">Nurse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dep">Department</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gs">General Staff</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pat">Patient</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ha">Hospital Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="med">Medical Records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="resm">Resource Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="emp">Employee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center mt-5">Edit Appointment</h1>
+        <div id="appointmentDetails" class="mt-5">
+            <!-- Appointment details will be dynamically inserted here -->
+        </div>
+        <!-- Buttons for updating and deleting appointment -->
+        <div class="mt-3">
+            
+            <button id="updateButton" type="button" value="update" class="btn btn-primary" href="/appo1">Update</button>
+            <button id="deleteButton" type="button" value="delete" class="btn btn-danger" href="/appo1">Delete</button>
+        </div>
+        <!-- Back button -->
+        <button type="button" class="btn btn-primary mt-3" onclick="goBack()">Back</button>
+    </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+
+    <script>
+        // Function to retrieve appointment details based on ID from URL query parameter
+        // function getAppointmentDetails() {
+        //     // Extract appointment ID from URL query parameter
+        //     const urlParams = new URLSearchParams(window.location.search);
+        //     const appointmentId = urlParams.get('appointmentId');
+
+        //     // Fetch appointment details based on ID
+        //     // Example: You can use AJAX or fetch API to send a request to the server to retrieve the appointment details
+
+        //     // Example code to simulate fetching appointment details (replace with actual implementation)
+        //     const appointmentDetails = {
+        //         AppointmentID: appointmentId,
+        //         // Replace the following with actual appointment details retrieved from the server
+        //         PatientID: 'PatientID123',
+        //         DoctorID: 'DoctorID456',
+        //         DateTime: '2024-04-20 10:00 AM',
+        //         Purpose: 'Follow-up appointment',
+        //         Status: 'Scheduled'
+        //     };
+
+        //     return appointmentDetails;
+        // }
+
+        // Function to retrieve appointment details based on ID from the server
+        getAppointmentDetails()
+  .then(appointmentDetails => {
+    // Log the fetched appointment details
+    console.log('Fetched appointment details:', appointmentDetails);
+
+    // Display appointment details on the page
+    displayAppointmentDetails(appointmentDetails);
+
+    // Add event listener for update button
+    const updateButton = document.getElementById('updateButton');
+    updateButton.addEventListener('click', updateAppointment);
+  })
+  .catch(error => {
+    // Handle error if the appointment details fetching fails
+    console.error('Error fetching appointment details:', error);
+    // You might want to display an error message to the user here
+  });
+async function getAppointmentDetails() {
+    // Extract appointment ID from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const appointmentId = urlParams.get('appointmentId');
+    const appid=parseInt(appointmentId)
+    
+    try 
+    {
+        
+        // Fetch appointment details from the server using the fetch API
+        const response = await fetch(`/api/appointments/${appid}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch appointment details');
+        
+        }
+        const appointmentDetails = await response.json();
+
+        return appointmentDetails;
+    } 
+    catch (error) 
+    {
+        console.error('Error fetching appointment details:', error);
+        // Handle error (e.g., display error message to user)
+    }
+}
+
+
+        // Function to display appointment details on the page
+        function displayAppointmentDetails(appointmentDetails) {
+            const dateTime = new Date(appointmentDetails.DateTime);
+
+            // Format the date and time string as YYYY-MM-DDTHH:MM
+            const formattedDateTime = `${dateTime.getFullYear()}-${String(dateTime.getMonth() + 1).padStart(2, '0')}-${String(dateTime.getDate()).padStart(2, '0')}T${String(dateTime.getHours()).padStart(2, '0')}:${String(dateTime.getMinutes()).padStart(2, '0')}`;
+
+
+    // Format the date and time string
+    // const formattedDateTime = appointmentDetails.DateTime.slice(0, -4); // Remove the ' GMT' part
+
+    // Update the appointment details div with formatted date and time
+    const appointmentDetailsDiv = document.getElementById('appointmentDetails');
+    appointmentDetailsDiv.innerHTML = `
+        <div class="mb-3">
+            <label for="patientIdInput" class="form-label">Patient ID</label>
+            <input type="text" class="form-control" id="patientIdInput" value="${appointmentDetails.PatientID}">
+        </div>
+        <div class="mb-3">
+            <label for="doctorIdInput" class="form-label">Doctor ID</label>
+            <input type="text" class="form-control" id="doctorIdInput" value="${appointmentDetails.DoctorID}">
+        </div>
+        <div class="mb-3">
+            <label for="dateTimeInput" class="form-label">Date & Time</label>
+            <input type="datetime-local" class="form-control" id="dateTimeInput" value="${formattedDateTime}">
+        </div>
+        <div class="mb-3">
+            <label for="purposeInput" class="form-label">Purpose</label>
+            <input type="text" class="form-control" id="purposeInput" value="${appointmentDetails.Purpose}">
+        </div>
+        <div class="mb-3">
+            <label for="statusInput" class="form-label">Status</label>
+            <input type="text" class="form-control" id="statusInput" value="${appointmentDetails.Status}">
+        </div>
+    `;
+}
+
+
+        // Function to update appointment
+        function updateAppointment() {
+        const urlParams = new URLSearchParams(window.location.search);
+    let appointmentId = urlParams.get('appointmentId');
+    appointmentId=parseInt(appointmentId)
+    // Retrieve updated values from input fields
+    const updatedPatientId = document.getElementById('patientIdInput').value;
+    const updatedDoctorId = document.getElementById('doctorIdInput').value;
+    const updatedDateTime = document.getElementById('dateTimeInput').value;
+    const updatedPurpose = document.getElementById('purposeInput').value;
+    const updatedStatus = document.getElementById('statusInput').value;
+
+    // Construct the request body with updated appointment details
+    const requestBody = {
+        action:'update',
+        PatientID: updatedPatientId,
+        DoctorID: updatedDoctorId,
+        DateTime: updatedDateTime,
+        Purpose: updatedPurpose,
+        Status: updatedStatus
+    };
+
+    // Send updated values to the server to update the appointment
+    fetch(`/api/appointments/${appointmentId}`, {
+        method: 'PUT', // Use the appropriate HTTP method (e.g., PUT for updating)
+        headers: {
+            'Content-Type': 'application/json' // Specify JSON content type
+        },
+        body: JSON.stringify(requestBody) // Convert request body to JSON string
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update appointment'); // Handle error response
+        }
+        // Handle success response
+        console.log('Appointment updated successfully');
+        window.location.href = '/appo1';
+        // Optionally, you can redirect the user to another page or perform any other action here
+    })
+    .catch(error => {
+        console.error('Error updating appointment:', error); // Log and handle the error
+        // Optionally, you can display an error message to the user or perform any other action here
+    });
+}
+
+
+        // Function to delete appointment
+        function deleteAppointment() {
+            // Retrieve appointment ID from URL query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            let appointmentId = urlParams.get('appointmentId');
+            appointmentId=parseInt(appointmentId)
+            const requestBody = {
+        action:'delete'}
+            fetch(`/api/appointments/${appointmentId}`, {
+        method: 'PUT', // Use the appropriate HTTP method (e.g., PUT for updating)
+        headers: {
+            'Content-Type': 'application/json' // Specify JSON content type
+        },
+        body: JSON.stringify(requestBody) // Convert request body to JSON string
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete appointment'); // Handle error response
+        }
+        // Handle success response
+        console.log('Appointment deleted successfully');
+        window.location.href = '/appo1';
+        // Optionally, you can redirect the user to another page or perform any other action here
+    })
+    .catch(error => {
+        console.error('Error updating appointment:', error); // Log and handle the error
+        // Optionally, you can display an error message to the user or perform any other action here
+    });
+
+            // Send request to the server to delete the appointment with the specified ID
+            // Example: You can use AJAX or fetch API to send a request to the server to delete the appointment
+            // Handle success or error responses accordingly
+        }
+
+        // Function to navigate back
+        function goBack() {
+            window.history.back();
+        }
+
+        // On page load
+        window.onload = function() {
+            // Retrieve appointment details based on ID from URL query parameter
+            getAppointmentDetails()
+            .then(appointmentDetails => {
+                // Display appointment details on the page
+                displayAppointmentDetails(appointmentDetails);
+
+                // Add event listener for update button
+                const updateButton = document.getElementById('updateButton');
+                updateButton.addEventListener('click', updateAppointment);
+
+                // Add event listener for delete button
+                const deleteButton = document.getElementById('deleteButton');
+                deleteButton.addEventListener('click', deleteAppointment);
+            })
+            .catch(error => {
+                // Handle error if the appointment details fetching fails
+                console.error('Error fetching appointment details:', error);
+                // You might want to display an error message to the user here
+            });
+
+            // console.log('const',appointmentDetails)
+            // // Display appointment details on the page
+            // displayAppointmentDetails(appointmentDetails);
+
+            // // Add event listener for update button
+            // const updateButton = document.getElementById('updateButton');
+            // updateButton.addEventListener('click', updateAppointment);
+
+            // // Add event listener for delete button
+            // const deleteButton = document.getElementById('deleteButton');
+            // deleteButton.addEventListener('click', deleteAppointment);
+        };
+    </script>
+</body>
+</html>

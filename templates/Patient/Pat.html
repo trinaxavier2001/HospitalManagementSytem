@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Patients</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Hospital Management System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/appo1">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="doc">Doctor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="nur">Nurse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dep">Department</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="gs">General Staff</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pat">Patient</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ha">Hospital Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="med">Medical Records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="resm">Resource Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="emp">Employee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center mt-5">List of Patients</h1>
+        <!-- Flash message section -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success mt-3" role="alert">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">PatientID</th>
+                    <th scope="col">DoctorID</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">DOB</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Emergency Contact Name</th>
+                    <th scope="col">Emergency Contact Phone</th>
+                    <th scope="col">Insurance Company</th>
+                    <th scope="col">Insurance Policy Number</th>
+                    <th scope="col">Medical History Summary</th>
+                    <th scope="col">Current Medications</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td id="patient_id_{{ patient.PatientID }}">{{ patient.PatientID }}</td>
+                    <td id="doctor_id_{{ patient.PatientID }}">{{ patient.DoctorID }}</td>
+                    <td id="first_name_{{ patient.PatientID }}">{{ patient.FirstName }}</td>
+                    <td id="last_name_{{ patient.PatientID }}">{{ patient.LastName }}</td>
+                    <td id="dob_{{ patient.PatientID }}">{{ patient.DOB }}</td>
+                    <td id="gender_{{ patient.PatientID }}">{{ patient.Gender }}</td>
+                    <td id="address_{{ patient.PatientID }}">{{ patient.Address }}</td>
+                    <td id="phone_{{ patient.PatientID }}">{{ patient.Phone }}</td>
+                    <td id="email_{{ patient.PatientID }}">{{ patient.Email }}</td>
+                    <td id="emergency_contact_name_{{ patient.PatientID }}">{{ patient.EmergencyContactName }}</td>
+                    <td id="emergency_contact_phone_{{ patient.PatientID }}">{{ patient.EmergencyContactPhone }}</td>
+                    <td id="insurance_company_{{ patient.PatientID }}">{{ patient.InsuranceCompany }}</td>
+                    <td id="insurance_policy_number_{{ patient.PatientID }}">{{ patient.InsurancePolicyNumber }}</td>
+                    <td id="medical_history_summary_{{ patient.PatientID }}">{{ patient.MedicalHistorySummary }}</td>
+                    <td id="current_medications_{{ patient.PatientID }}">{{ patient.CurrentMedications }}</td>
+
+                    <td>
+                        <form id="form_{{ patient.PatientID }}" action="/pat" method="POST" class="d-inline">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="patient_id" id="patient_id_input_{{ patient.PatientID }}" value="{{ patient.PatientID }}">
+                            <input type="number" name="doctor_id" id="doctor_id_input_{{ patient.PatientID }}" value="{{ patient.DoctorID }}" class="d-none">
+                            <input type="text" name="first_name" id="first_name_input_{{ patient.PatientID }}" value="{{ patient.FirstName }}" class="d-none">
+                            <input type="text" name="last_name" id="last_name_input_{{ patient.PatientID }}" value="{{ patient.LastName }}" class="d-none">
+                            <input type="date" name="dob" id="dob_input_{{ patient.PatientID }}" value="{{ patient.DOB }}" class="d-none">
+                            <input type="text" name="gender" id="gender_input_{{ patient.PatientID }}" value="{{ patient.Gender }}" class="d-none">
+                            <input type="text" name="address" id="address_input_{{ patient.PatientID }}" value="{{ patient.Address }}" class="d-none">
+                            <input type="tel" name="phone" id="phone_input_{{ patient.PatientID }}" value="{{ patient.Phone }}" class="d-none">
+                            <input type="email" name="email" id="email_input_{{ patient.PatientID }}" value="{{ patient.Email }}" class="d-none">
+                            <input type="text" name="emergency_contact_name" id="emergency_contact_name_input_{{ patient.PatientID }}" value="{{ patient.EmergencyContactName }}" class="d-none">
+                            <input type="tel" name="emergency_contact_phone" id="emergency_contact_phone_input_{{ patient.PatientID }}" value="{{ patient.EmergencyContactPhone }}" class="d-none">
+                            <input type="text" name="insurance_company" id="insurance_company_input_{{ patient.PatientID }}" value="{{ patient.InsuranceCompany }}" class="d-none">
+                            <input type="text" name="insurance_policy_number" id="insurance_policy_number_input_{{ patient.PatientID }}" value="{{ patient.InsurancePolicyNumber }}" class="d-none">
+                            <textarea name="medical_history_summary" id="medical_history_summary_input_{{ patient.PatientID }}" class="d-none">{{ patient.MedicalHistorySummary }}</textarea>
+                            <textarea name="current_medications" id="current_medications_input_{{ patient.PatientID }}" class="d-none">{{ patient.CurrentMedications }}</textarea>
+                            <!-- Add more hidden input fields for other attributes if needed -->
+                            <button type="button" id="updateButton_{{ patient.PatientID }}" class="btn btn-primary" onclick="toggleEdit({{ patient.PatientID }})">Update</button>
+                            <button type="submit" class="btn btn-danger d-none">Submit</button>
+                            <button type="submit" id="deleteButton_{{ patient.PatientID }}" class="btn btn-danger" onclick="submitForm({{ patient.PatientID }})" value="delete">Delete</button>
+                        </form>
+                        
+                        
+                        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Back button -->
+        <button type="button" class="btn btn-primary" onclick="goBack()">Back</button>
+        <form action="/pat" method="post">
+            <!-- Hidden input field for action -->
+            <input type="hidden" name="action" value="insertrecord">
+            <!-- Button styled as a link -->
+            <button type="submit" class="btn btn-success">Insert Record</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+
+    <script>
+        function toggleEdit(patientId)
+        {
+            var doctorIdCell = document.getElementById('doctor_id_' + patientId);
+            console.log(doctorIdCell)
+            var firstNameCell = document.getElementById('first_name_' + patientId);
+            var lastNameCell = document.getElementById('last_name_' + patientId);
+            var dobCell = document.getElementById('dob_' + patientId);
+            var genderCell = document.getElementById('gender_' + patientId);
+            var addressCell = document.getElementById('address_' + patientId);
+            var phoneCell = document.getElementById('phone_' + patientId);
+            var emailCell = document.getElementById('email_' + patientId);
+            var emergencyContactNameCell = document.getElementById('emergency_contact_name_' + patientId);
+            var emergencyContactPhoneCell = document.getElementById('emergency_contact_phone_' + patientId);
+            var insuranceCompanyCell = document.getElementById('insurance_company_' + patientId);
+            var insurancePolicyNumberCell = document.getElementById('insurance_policy_number_' + patientId);
+            var medicalHistorySummaryCell = document.getElementById('medical_history_summary_' + patientId);
+            var currentMedicationsCell = document.getElementById('current_medications_' + patientId);
+    
+            // Add variables for other columns as needed
+            var existingDoctorIdInput = doctorIdCell.querySelector('input[type="number"]');
+            console.log(existingDoctorIdInput)
+            var existingFirstNameInput = firstNameCell.querySelector('input[type="text"]');
+            var existingLastNameInput = lastNameCell.querySelector('input[type="text"]');
+            var existingDobInput = dobCell.querySelector('input[type="date"]');
+            var existingGenderInput = genderCell.querySelector('input[type="text"]');
+            var existingAddressInput = addressCell.querySelector('input[type="text"]');
+            var existingPhoneInput = phoneCell.querySelector('input[type="tel"]');
+            var existingEmailInput = emailCell.querySelector('input[type="email"]');
+            var existingEmergencyContactNameInput = emergencyContactNameCell.querySelector('input[type="text"]');
+            var existingEmergencyContactPhoneInput = emergencyContactPhoneCell.querySelector('input[type="tel"]');
+            var existingInsuranceCompanyInput = insuranceCompanyCell.querySelector('input[type="text"]');
+            var existingInsurancePolicyNumberInput = insurancePolicyNumberCell.querySelector('input[type="text"]');
+            var existingMedicalHistorySummaryInput = medicalHistorySummaryCell.querySelector('textarea');
+            var existingCurrentMedicationsInput = currentMedicationsCell.querySelector('textarea');
+    
+            // Add variables for other columns as needed
+    
+            var editButton = firstNameCell.parentNode.querySelector('#updateButton_' + patientId);
+            
+            if (existingFirstNameInput) 
+            {
+                // Switch back to non-edit mode
+                var originalDoctorIdValue = existingDoctorIdInput.getAttribute('data-original-value');
+                var originalFirstNameValue = existingFirstNameInput.getAttribute('data-original-value');
+                var originalLastNameValue = existingLastNameInput.getAttribute('data-original-value');
+                var originalDobValue = existingDobInput.getAttribute('data-original-value');
+                var originalGenderValue = existingGenderInput.getAttribute('data-original-value');
+                var originalAddressValue = existingAddressInput.getAttribute('data-original-value');
+                var originalPhoneValue = existingPhoneInput.getAttribute('data-original-value');
+                var originalEmailValue = existingEmailInput.getAttribute('data-original-value');
+                var originalEmergencyContactNameValue = existingEmergencyContactNameInput.getAttribute('data-original-value');
+                var originalEmergencyContactPhoneValue = existingEmergencyContactPhoneInput.getAttribute('data-original-value');
+                var originalInsuranceCompanyValue = existingInsuranceCompanyInput.getAttribute('data-original-value');
+                var originalInsurancePolicyNumberValue = existingInsurancePolicyNumberInput.getAttribute('data-original-value');
+                var originalMedicalHistorySummaryValue = existingMedicalHistorySummaryInput.getAttribute('data-original-value');
+                var originalCurrentMedicationsValue = existingCurrentMedicationsInput.getAttribute('data-original-value');
+                
+                // Restore other column values as needed
+                
+                doctorIdCell.innerHTML = originalDoctorIdValue;
+                firstNameCell.innerHTML = originalFirstNameValue;
+                lastNameCell.innerHTML = originalLastNameValue;
+                dobCell.innerHTML = originalDobValue;
+                genderCell.innerHTML = originalGenderValue;
+                addressCell.innerHTML = originalAddressValue;
+                phoneCell.innerHTML = originalPhoneValue;
+                emailCell.innerHTML = originalEmailValue;
+                emergencyContactNameCell.innerHTML = originalEmergencyContactNameValue;
+                emergencyContactPhoneCell.innerHTML = originalEmergencyContactPhoneValue;
+                insuranceCompanyCell.innerHTML = originalInsuranceCompanyValue;
+                insurancePolicyNumberCell.innerHTML = originalInsurancePolicyNumberValue;
+                medicalHistorySummaryCell.innerHTML = originalMedicalHistorySummaryValue;
+                currentMedicationsCell.innerHTML = originalCurrentMedicationsValue;
+                
+                editButton.innerHTML = 'Update';
+                
+                // Update the hidden input field values
+                document.getElementById('doctor_id_input_' + patientId).value = originalDoctorIdValue;
+                console.log('u',document.getElementById('doctor_id_input_' + patientId).value)
+                document.getElementById('first_name_input_' + patientId).value = originalFirstNameValue;
+                document.getElementById('last_name_input_' + patientId).value = originalLastNameValue;
+                document.getElementById('dob_input_' + patientId).value = originalDobValue;
+                document.getElementById('gender_input_' + patientId).value = originalGenderValue;
+                document.getElementById('address_input_' + patientId).value = originalAddressValue;
+                document.getElementById('phone_input_' + patientId).value = originalPhoneValue;
+                document.getElementById('email_input_' + patientId).value = originalEmailValue;
+                document.getElementById('emergency_contact_name_input_' + patientId).value = originalEmergencyContactNameValue;
+                document.getElementById('emergency_contact_phone_input_' + patientId).value = originalEmergencyContactPhoneValue;
+                document.getElementById('insurance_company_input_' + patientId).value = originalInsuranceCompanyValue;
+                document.getElementById('insurance_policy_number_input_' + patientId).value = originalInsurancePolicyNumberValue;
+                document.getElementById('medical_history_summary_input_' + patientId).value = originalMedicalHistorySummaryValue;
+                document.getElementById('current_medications_input_' + patientId).value = originalCurrentMedicationsValue;
+    
+                // Update hidden input fields for other columns as needed
+                
+                // Remove the submit button
+                removeSubmitButton(patientId);
+            } 
+            else 
+            {
+                // Switch to edit mode
+                editButton.innerHTML = 'Cancel';
+                var originalDoctorIdValue = doctorIdCell.textContent.trim();
+                var originalFirstNameValue = firstNameCell.textContent.trim(); 
+                var originalLastNameValue = lastNameCell.textContent.trim(); 
+                var originalDobValue = dobCell.textContent.trim(); 
+                var originalGenderValue = genderCell.textContent.trim(); 
+                var originalAddressValue = addressCell.textContent.trim(); 
+                var originalPhoneValue = phoneCell.textContent.trim(); 
+                var originalEmailValue = emailCell.textContent.trim(); 
+                var originalEmergencyContactNameValue = emergencyContactNameCell.textContent.trim(); 
+                var originalEmergencyContactPhoneValue = emergencyContactPhoneCell.textContent.trim(); 
+                var originalInsuranceCompanyValue = insuranceCompanyCell.textContent.trim(); 
+                var originalInsurancePolicyNumberValue = insurancePolicyNumberCell.textContent.trim(); 
+                var originalMedicalHistorySummaryValue = medicalHistorySummaryCell.textContent.trim(); 
+                var originalCurrentMedicationsValue = currentMedicationsCell.textContent.trim(); 
+                
+                // Get original values for other columns as needed
+                
+                doctorIdCell.innerHTML = '<input type="number" name="doctor_id" value="' + originalDoctorIdValue + '" data-original-value="' + originalDoctorIdValue + '">';
+                firstNameCell.innerHTML = '<input type="text" name="first_name" value="' + originalFirstNameValue + '" data-original-value="' + originalFirstNameValue + '">';
+                lastNameCell.innerHTML = '<input type="text" name="last_name" value="' + originalLastNameValue + '" data-original-value="' + originalLastNameValue + '">';
+                dobCell.innerHTML = '<input type="date" name="dob" value="' + originalDobValue + '" data-original-value="' + originalDobValue + '">';
+                genderCell.innerHTML = '<input type="text" name="gender" value="' + originalGenderValue + '" data-original-value="' + originalGenderValue + '">';
+                addressCell.innerHTML = '<input type="text" name="address" value="' + originalAddressValue + '" data-original-value="' + originalAddressValue + '">';
+                phoneCell.innerHTML = '<input type="tel" name="phone" value="' + originalPhoneValue + '" data-original-value="' + originalPhoneValue + '">';
+                emailCell.innerHTML = '<input type="email" name="email" value="' + originalEmailValue + '" data-original-value="' + originalEmailValue + '">';
+                emergencyContactNameCell.innerHTML = '<input type="text" name="emergency_contact_name" value="' + originalEmergencyContactNameValue + '" data-original-value="' + originalEmergencyContactNameValue + '">';
+                emergencyContactPhoneCell.innerHTML = '<input type="tel" name="emergency_contact_phone" value="' + originalEmergencyContactPhoneValue + '" data-original-value="' + originalEmergencyContactPhoneValue + '">';
+                insuranceCompanyCell.innerHTML = '<input type="text" name="insurance_company" value="' + originalInsuranceCompanyValue + '" data-original-value="' + originalInsuranceCompanyValue + '">';
+                insurancePolicyNumberCell.innerHTML = '<input type="text" name="insurance_policy_number" value="' + originalInsurancePolicyNumberValue + '" data-original-value="' + originalInsurancePolicyNumberValue + '">';
+                medicalHistorySummaryCell.innerHTML = '<textarea name="medical_history_summary" data-original-value="' + originalMedicalHistorySummaryValue + '">' + originalMedicalHistorySummaryValue + '</textarea>';
+                currentMedicationsCell.innerHTML = '<textarea name="current_medications" data-original-value="' + originalCurrentMedicationsValue + '">' + originalCurrentMedicationsValue + '</textarea>';
+                
+                // Create input fields for other columns as needed
+                
+                // Add submit button
+                addSubmitButton(patientId);
+            }
+        }
+    
+        function addSubmitButton(patientId) 
+        {
+            var cell = document.getElementById('first_name_' + patientId); // Adjust this line for other columns
+            var submitButton = document.createElement("button");
+            submitButton.innerHTML = "Submit";
+            submitButton.classList.add("btn", "btn-success");
+            submitButton.setAttribute("onclick", "submitEdit(" + patientId + ")");
+            cell.appendChild(submitButton);
+        }
+    
+        function removeSubmitButton(patientId) 
+        {
+            var cell = document.getElementById('first_name_' + patientId); // Adjust this line for other columns
+            var submitButton = cell.querySelector("button");
+            if (submitButton) 
+            {
+                submitButton.remove();
+            }
+        }
+    
+        function submitEdit(patientId) 
+        {
+            var doctorIdCell = document.getElementById('doctor_id_' + patientId);
+            console.log('cell',doctorIdCell)
+            var firstNameCell = document.getElementById('first_name_' + patientId);
+            var lastNameCell = document.getElementById('last_name_' + patientId);
+            var dobCell = document.getElementById('dob_' + patientId);
+            var genderCell = document.getElementById('gender_' + patientId);
+            var addressCell = document.getElementById('address_' + patientId);
+            var phoneCell = document.getElementById('phone_' + patientId);
+            var emailCell = document.getElementById('email_' + patientId);
+            var emergencyContactNameCell = document.getElementById('emergency_contact_name_' + patientId);
+            var emergencyContactPhoneCell = document.getElementById('emergency_contact_phone_' + patientId);
+            var insuranceCompanyCell = document.getElementById('insurance_company_' + patientId);
+            var insurancePolicyNumberCell = document.getElementById('insurance_policy_number_' + patientId);
+            var medicalHistorySummaryCell = document.getElementById('medical_history_summary_' + patientId);
+            var currentMedicationsCell = document.getElementById('current_medications_' + patientId);
+    
+            // Get values for other columns as needed
+            
+            var newDoctorIdValue = doctorIdCell.querySelector('input[type="number"]').value;
+            console.log(newDoctorIdValue)
+            var newFirstNameValue = firstNameCell.querySelector('input[type="text"]').value.trim();
+            var newLastNameValue = lastNameCell.querySelector('input[type="text"]').value.trim();
+            var newDobValue = dobCell.querySelector('input[type="date"]').value.trim();
+            var newGenderValue = genderCell.querySelector('input[type="text"]').value.trim();
+            var newAddressValue = addressCell.querySelector('input[type="text"]').value.trim();
+            var newPhoneValue = phoneCell.querySelector('input[type="tel"]').value.trim();
+            var newEmailValue = emailCell.querySelector('input[type="email"]').value.trim();
+            var newEmergencyContactNameValue = emergencyContactNameCell.querySelector('input[type="text"]').value.trim();
+            var newEmergencyContactPhoneValue = emergencyContactPhoneCell.querySelector('input[type="tel"]').value.trim();
+            var newInsuranceCompanyValue = insuranceCompanyCell.querySelector('input[type="text"]').value.trim();
+            var newInsurancePolicyNumberValue = insurancePolicyNumberCell.querySelector('input[type="text"]').value.trim();
+            var newMedicalHistorySummaryValue = medicalHistorySummaryCell.querySelector('textarea').value.trim();
+            var newCurrentMedicationsValue = currentMedicationsCell.querySelector('textarea').value.trim();
+            
+            // Update the hidden input field values
+            console.log(document.getElementById('doctor_id_input_' + patientId).value)
+            document.getElementById('doctor_id_input_' + patientId).value = newDoctorIdValue;
+            document.getElementById('first_name_input_' + patientId).value = newFirstNameValue;
+            document.getElementById('last_name_input_' + patientId).value = newLastNameValue;
+            document.getElementById('dob_input_' + patientId).value = newDobValue;
+            document.getElementById('gender_input_' + patientId).value = newGenderValue;
+            document.getElementById('address_input_' + patientId).value = newAddressValue;
+            document.getElementById('phone_input_' + patientId).value = newPhoneValue;
+            document.getElementById('email_input_' + patientId).value = newEmailValue;
+            document.getElementById('emergency_contact_name_input_' + patientId).value = newEmergencyContactNameValue;
+            document.getElementById('emergency_contact_phone_input_' + patientId).value = newEmergencyContactPhoneValue;
+            document.getElementById('insurance_company_input_' + patientId).value = newInsuranceCompanyValue;
+            document.getElementById('insurance_policy_number_input_' + patientId).value = newInsurancePolicyNumberValue;
+            document.getElementById('medical_history_summary_input_' + patientId).value = newMedicalHistorySummaryValue;
+            document.getElementById('current_medications_input_' + patientId).value = newCurrentMedicationsValue;
+    
+            // Submit the form
+            document.getElementById('form_' + patientId).submit();
+            
+            // Switch back to non-edit mode
+            toggleEdit(patientId);
+        }
+    
+        function submitForm(patientId) 
+        {
+            console.log("Deleting patient with ID:", patientId);
+            event.preventDefault(); 
+            var form = document.getElementById('form_' + patientId);
+            var actionInput = form.querySelector('input[name="action"]');
+            actionInput.value = 'delete'; 
+            form.submit(); 
+        }
+        
+        function goBack() 
+        {
+            window.history.back();
+        }
+        
+        function hideSuccessMessage() 
+        {
+            var successMessage = document.querySelector('.alert-success');
+            if (successMessage) 
+            {
+                setTimeout(function() 
+                {
+                    successMessage.style.display = 'none';
+                }, 3000); 
+            }
+        }
+    
+        window.onload = function() 
+        {
+            hideSuccessMessage();
+        };
+    
+    </script>
+    
+</body>
+</html>
