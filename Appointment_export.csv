@@ -1,0 +1,4 @@
+AppointmentID,PatientID,DoctorID,DateTime,Purpose,Status
+5,4,5,2024-04-24T17:42,Follow-up,cancelled
+6,6,4,2024-03-21T11:30,Routine Check-up,Scheduled
+7,7,3,2024-03-22T09:00,Physical Therapy,Scheduled
